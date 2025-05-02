@@ -1,0 +1,17 @@
+{
+  "name": "cf-picker-ue",
+  "id": "cf-picker-ue",
+  "description": "picks cfs by model type",
+  "version": "0.0.1",
+  "customRenderers": [
+    {
+      "dataType": "reference",
+      "url": "/#/renderer/reference"
+    }
+  ],
+  "runtimeActions": [
+    {
+      "name": "model-filter"
+    }
+  ]
+}
