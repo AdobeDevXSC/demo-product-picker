@@ -11,6 +11,7 @@ import FilterModels from "./FilterModels";
 
 
 function App() {
+  console.log('loading App component');
   return (
     <Router>
       <ErrorBoundary onError={onError} FallbackComponent={fallbackComponent}>
