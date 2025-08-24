@@ -40,6 +40,10 @@ export default FilterModels = () => {
 
   const onUpdateHandler = async () => {
     const upd = [...selectedKeys].join(',');
+    // console.log(upd, id, type, rendererId);
+    // console.log(await guestConnection.host.editorState.get());
+    // return;
+    //need to move instrumentation
     if(upd === '') return;
     guestConnection.host.editorActions.update({ target: { editable: { id: id, type: type } }, patch: [{ op: "replace", path: `/${rendererId}`, value: upd }] })
     guestConnection.host.editorActions.refreshPage();

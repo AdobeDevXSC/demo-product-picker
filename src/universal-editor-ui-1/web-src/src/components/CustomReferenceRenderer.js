@@ -48,6 +48,7 @@ export default CustomeReferenceRenderer = () => {
                 else
                     return false;
             });
+            console.log(selected);
 
             setSelected(selected[0]);
             const s = value.split(',').map(x => {return {id: x, name: x}});
@@ -127,7 +128,6 @@ export default CustomeReferenceRenderer = () => {
                                 onChange={onChangeHandler}
                                 width="100%"
                                 value={value}
-                                isHidden
                             />
                         </Flex>
                     </View>
