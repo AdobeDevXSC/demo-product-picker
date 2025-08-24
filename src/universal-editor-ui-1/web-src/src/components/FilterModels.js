@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Provider, Button, Content } from "@adobe/react-spectrum";
-import { Image, TableView, TableBody, Row, Cell, TableHeader, Column } from '@adobe/react-spectrum'
+import { Image, TableView, TableBody, Row, Cell, TableHeader, Column, Flex } from '@adobe/react-spectrum'
 import { attach } from "@adobe/uix-guest";
 import { lightTheme } from "@adobe/react-spectrum";
-import { extensionId, test } from "./Constants";
-import metadata from '../../../../app-metadata.json';
-import { register } from "@adobe/uix-guest";
+import { extensionId } from "./Constants";
 import actionWebInvoke from "../utils";
 import config from '../config.json';
+import { useParams } from 'react-router-dom';
 
-export default FilterModels = (params) => {
+export default FilterModels = () => {
   let [selectedKeys, setSelectedKeys] = useState(new Set());
   const [products, setProducts] = useState(new Set());
   const [columns, setColumns] = useState(new Set());
   const [guestConnection, setGuestConnection] = useState();
-  console.log(params);
-
+  const { id, type, rendererId } = useParams();
+ 
   useEffect(() => {
     const init = async () => {
       // connect to the host 
       const connection = await attach({ id: extensionId });
-      console.log(connection);
       setGuestConnection(connection);
     };
     init().catch((e) =>
@@ -32,7 +30,6 @@ export default FilterModels = (params) => {
   useEffect(() => {
     const init = async () => {
       const { columns, data } = await actionWebInvoke(config['get-products'])
-      console.log("Products fetched:", columns, data);
       setProducts(data);
       setColumns(columns);
     };
@@ -41,12 +38,19 @@ export default FilterModels = (params) => {
     );
   }, []);
 
-  const onCloseHandler = () => {
-    console.log(guestConnection);
+  const onUpdateHandler = async () => {
+    const upd = [...selectedKeys].join(',');
+    if(upd === '') return;
+    guestConnection.host.editorActions.update({ target: { editable: { id: id, type: type } }, patch: [{ op: "replace", path: `/${rendererId}`, value: upd }] })
+    guestConnection.host.editorActions.refreshPage();
     guestConnection.host.modal.close();
   };
-  console.log("Selected items:", [...selectedKeys].join(', '));
-  console.log("Products:", products);
+
+  const onCloseHandler = async () => {
+    guestConnection.host.modal.close();
+  };
+  // console.log("Selected items:", [...selectedKeys].join(', '));
+  // console.log("Products:", products);
   return (
     <Provider theme={lightTheme} colorScheme="light">
       <Content width="100%">
@@ -70,9 +74,14 @@ export default FilterModels = (params) => {
             )}
           </TableBody>
         </TableView>)}
-        <Button variant="primary" onPress={onCloseHandler} position="fixed" bottom="0px" right="8px">
-          Close
-        </Button>
+        <Flex direction="row" height="size-800" gap="size-100" margin={'10px'} justifyContent={"end"}>
+          <Button variant="accent" onPress={onUpdateHandler}>
+            Update
+          </Button>
+          <Button variant="primary" onPress={onCloseHandler}>
+            Close
+          </Button>
+        </Flex>
       </Content>
     </Provider>
   );

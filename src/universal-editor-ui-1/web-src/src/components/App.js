@@ -26,7 +26,7 @@ function App() {
             element={<CustomReferenceRenderer />}
           />
           <Route
-            exact path="models"
+            exact path="models/:id/:type/:rendererId"
             element={<FilterModels />}
           />
           // YOUR CUSTOM ROUTES SHOULD BE HERE

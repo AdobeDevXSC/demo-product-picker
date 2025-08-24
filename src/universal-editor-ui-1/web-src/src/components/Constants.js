@@ -4,7 +4,7 @@
 
 module.exports = {
   extensionId: 'cf-picker-ue',
-  test:'three, four',
+  test:'',
   products: {
     columns: [
       { name: '', id: 'imageUrl', width: 80 },

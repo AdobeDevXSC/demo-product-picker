@@ -13,7 +13,7 @@ function ExtensionRegistration() {
   const init = async () => {
     const guestConnection = await register({
       id: extensionId,
-      metadata,
+      metadata: {one: 'test'},
       methods: {
         canvas: {
           getRenderers() {
