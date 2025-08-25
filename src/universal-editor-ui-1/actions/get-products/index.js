@@ -28,22 +28,22 @@ async function main(params) {
     logger.info('Calling the main action')
 
     // log parameters, only if params.LOG_LEVEL === 'debug'
-    logger.debug(stringParameters(params))
+    logger.info(stringParameters(params))
 
     // check for missing request input parameters and headers
-    const requiredParams = [/* add required params */]
+    const requiredParams = ['productUrl']
     const requiredHeaders = []
     const errorMessage = checkMissingRequestInputs(params, requiredParams, requiredHeaders)
     if (errorMessage) {
       // return and log client errors
       return errorResponse(400, errorMessage, logger)
     }
-
     // extract the user Bearer token from the Authorization header
     const token = getBearerToken(params)
 
+    const { productUrl } = params;
     // replace this with the api you want to access
-    const apiEndpoint = 'https://main--demo-boilerplate--lamontacrook.hlx.page/misc/products.json?sheets=tory-burch'
+    const apiEndpoint = productUrl; //'https://main--demo-boilerplate--lamontacrook.hlx.page/misc/products.json?sheets=tory-burch'
 
     // fetch content from external api endpoint
     const res = await fetch(apiEndpoint)

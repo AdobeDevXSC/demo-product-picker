@@ -26,6 +26,7 @@ export default CustomeReferenceRenderer = () => {
         { id: 8, name: 'Turtle' },
         { id: 9, name: 'Wombat' }
     ]);
+    const [productUrl, setProductUrl] = useState();
 
     const { rendererId } = useParams();
     if (!rendererId) {
@@ -39,7 +40,10 @@ export default CustomeReferenceRenderer = () => {
             const connection = await attach({ id: extensionId });
             const model = await connection.host.field.getModel();
             const value = await connection.host.field.getValue();
-
+            const p = (connection.configuration && connection.configuration.productUrl) || 'https://main--demo-boilerplate--lamontacrook.hlx.page/misc/products.json?sheets=tory-burch';
+            console.log(encodeURIComponent(p));
+            setProductUrl(p);
+            
             const { editables } = await connection.host.editorState.get();
 
             const selected = editables.filter((item) => {
@@ -48,7 +52,7 @@ export default CustomeReferenceRenderer = () => {
                 else
                     return false;
             });
-            console.log(selected);
+            console.log(connection);
 
             setSelected(selected[0]);
             const s = value.split(',').map(x => {return {id: x, name: x}});
@@ -76,14 +80,25 @@ export default CustomeReferenceRenderer = () => {
     };
 
     const openSelector = async () => {
-        const url = `/index.html#/models/${selected.id}/${selected.type}/${rendererId}`; // absolute or relative path
+        const url = `/index.html#/models/${selected.id}/${selected.type}/${rendererId}/${encodeURIComponent(productUrl)}`; // absolute or relative path
         connection.host.modal.showUrl({
             title: 'Select Products: ',
             url,
-            width: '900px',
+            width: '900px'
         });
     }
 
+    const updateProducts = (item) => {
+        const dProd = item.anchorKey;
+        const newSkus = skus.filter(({id}) => id !== dProd);
+        setSkus(newSkus);
+        console.log(newSkus);
+        const newValue = (newSkus.map(({id}) => id)).join(',');
+        setValue(newValue);
+        console.log('new value ', newValue);
+        connection.host.editorActions.update({ target: { editable: { id: selected.id, type: selected.type } }, patch: [{ op: "replace", path: `/${rendererId}`, value: newValue }] })
+    };
+    console.log(skus);
     return (
         <Provider theme={lightTheme} colorScheme="light">
             {!isLoading ? (
@@ -100,7 +115,8 @@ export default CustomeReferenceRenderer = () => {
                                 aria-label="Selected Products"
                                 selectedKeys={skus}
                                 selectionMode="single"
-                                onSelectionChange={setSelected}>
+                                onSelectionChange={updateProducts}
+                                onAction={(key) => console.log(key)}>
                                 {skus.length > 0 && (
                                     <Section title='Selected Products' items={skus}>
                                         {sku => (<Item textValue={sku.id} onClick>

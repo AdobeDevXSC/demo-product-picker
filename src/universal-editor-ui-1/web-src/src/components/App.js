@@ -11,7 +11,6 @@ import FilterModels from "./FilterModels";
 
 
 function App() {
-  console.log('loading App component');
   return (
     <Router>
       <ErrorBoundary onError={onError} FallbackComponent={fallbackComponent}>
@@ -26,7 +25,7 @@ function App() {
             element={<CustomReferenceRenderer />}
           />
           <Route
-            exact path="models/:id/:type/:rendererId"
+            exact path="models/:id/:type/:rendererId/:productUrl"
             element={<FilterModels />}
           />
           // YOUR CUSTOM ROUTES SHOULD BE HERE

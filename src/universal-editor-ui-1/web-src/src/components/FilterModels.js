@@ -13,12 +13,13 @@ export default FilterModels = () => {
   const [products, setProducts] = useState(new Set());
   const [columns, setColumns] = useState(new Set());
   const [guestConnection, setGuestConnection] = useState();
-  const { id, type, rendererId } = useParams();
+  const { id, type, rendererId, productUrl } = useParams();
  
   useEffect(() => {
     const init = async () => {
       // connect to the host 
       const connection = await attach({ id: extensionId });
+       
       setGuestConnection(connection);
     };
     init().catch((e) =>
@@ -28,8 +29,10 @@ export default FilterModels = () => {
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      const { columns, data } = await actionWebInvoke(config['get-products'])
+    const init = async () => {  
+      const prds = { productUrl: productUrl };
+      console.log(prds);
+      const { columns, data } = await actionWebInvoke(config['get-products'], {}, prds)
       setProducts(data);
       setColumns(columns);
     };
@@ -45,7 +48,7 @@ export default FilterModels = () => {
     // return;
     //need to move instrumentation
     if(upd === '') return;
-    guestConnection.host.editorActions.update({ target: { editable: { id: id, type: type } }, patch: [{ op: "replace", path: `/${rendererId}`, value: upd }] })
+    guestConnection.host.editorActions.update({ target: { editable: { id: id, type: type } }, patch: [{ op: "replace", path: `/${rendererId}`, value: upd }] });
     guestConnection.host.editorActions.refreshPage();
     guestConnection.host.modal.close();
   };
