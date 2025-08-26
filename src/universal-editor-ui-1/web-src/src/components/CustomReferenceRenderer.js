@@ -15,17 +15,7 @@ export default CustomeReferenceRenderer = () => {
     const [error, setError] = useState();
     const [validationState, setValidationState] = useState();
     const [selected, setSelected] = useState({});
-    const [skus, setSkus] = useState([
-        { id: 1, name: 'Aardvark' },
-        { id: 2, name: 'Cat' },
-        { id: 3, name: 'Dog' },
-        { id: 4, name: 'Kangaroo' },
-        { id: 5, name: 'Koala' },
-        { id: 6, name: 'Penguin' },
-        { id: 7, name: 'Snake' },
-        { id: 8, name: 'Turtle' },
-        { id: 9, name: 'Wombat' }
-    ]);
+    const [skus, setSkus] = useState([]);
     const [productUrl, setProductUrl] = useState();
 
     const { rendererId } = useParams();
@@ -41,7 +31,7 @@ export default CustomeReferenceRenderer = () => {
             const model = await connection.host.field.getModel();
             const value = await connection.host.field.getValue();
             const p = (connection.configuration && connection.configuration.productUrl) || 'https://main--demo-boilerplate--lamontacrook.hlx.page/misc/products.json?sheets=tory-burch';
-            console.log(encodeURIComponent(p));
+            console.log(connection);
             setProductUrl(p);
             
             const { editables } = await connection.host.editorState.get();
@@ -84,7 +74,8 @@ export default CustomeReferenceRenderer = () => {
         connection.host.modal.showUrl({
             title: 'Select Products: ',
             url,
-            width: '900px'
+            width: '900px',
+            height: '300px'
         });
     }
 
