@@ -8,7 +8,7 @@ import { lightTheme } from "@adobe/react-spectrum";
 import { extensionId, test } from "./Constants";
 
 export default CustomeReferenceRenderer = () => {
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [connection, setConnection] = useState();
     const [model, setModel] = useState();
     const [value, setValue] = useState();
@@ -31,7 +31,8 @@ export default CustomeReferenceRenderer = () => {
             const model = await connection.host.field.getModel();
             const value = await connection.host.field.getValue();
             const p = (connection.configuration && connection.configuration.productUrl) || 'https://main--demo-boilerplate--lamontacrook.hlx.page/misc/products.json?sheets=tory-burch';
-            console.log(connection);
+            console.log('Model ', model);
+            console.log('Value: ', value);
             setProductUrl(p);
             
             const { editables } = await connection.host.editorState.get();
@@ -45,7 +46,10 @@ export default CustomeReferenceRenderer = () => {
             console.log(connection);
 
             setSelected(selected[0]);
-            const s = value.split(',').map(x => {return {id: x, name: x}});
+            console.log('selected: ', selected[0]);
+            const s1 = value ? value.split(','):[];
+            console.log('S1 ', s1);
+            const s = s1.map(x => {return {id: x, name: x}});
             setSkus(s);
 
             setConnection(connection);
@@ -57,7 +61,7 @@ export default CustomeReferenceRenderer = () => {
             setError(await connection.host.field.getError());
             // get field validation state
             setValidationState(await connection.host.field.getValidationState());
-            setIsLoading(false);
+            // setIsLoading(false);
         };
         init().catch((e) =>
             console.log("Extension got the error during initialization:", e)
@@ -84,12 +88,12 @@ export default CustomeReferenceRenderer = () => {
         const newSkus = skus.filter(({id}) => id !== dProd);
         setSkus(newSkus);
         console.log(newSkus);
-        const newValue = (newSkus.map(({id}) => id)).join(',');
-        setValue(newValue);
-        console.log('new value ', newValue);
+        const newValue = (newSkus.map(({id}) => id)).join(',') || '123456';
+        console.log('new value: ', newValue)
+        console.log(selected);
         connection.host.editorActions.update({ target: { editable: { id: selected.id, type: selected.type } }, patch: [{ op: "replace", path: `/${rendererId}`, value: newValue }] })
+        setValue(newValue);
     };
-    console.log(skus);
     return (
         <Provider theme={lightTheme} colorScheme="light">
             {!isLoading ? (
@@ -124,17 +128,17 @@ export default CustomeReferenceRenderer = () => {
                             </ActionButton>
                             <TextField
                                 validationState={error ? "invalid" : validationState}
-                                label={model.multi ? null : model.label}
-                                aria-label={model.label || model.name}
+                                label={model?.multi ? null : model?.label}
+                                aria-label={model?.label || model?.name}
                                 defaultValue={value}
                                 //   maxLength={model.validation.maxLength}
-                                isReadOnly={model.readOnly}
-                                isDisabled={model.readOnly}
-                                isRequired={model.required}
+                                isReadOnly={model?.readOnly}
+                                isDisabled={model?.readOnly}
+                                isRequired={model?.required}
                                 errorMessage={error}
                                 onChange={onChangeHandler}
                                 width="100%"
-                                value={value}
+                                value={value || ""}
                             />
                         </Flex>
                     </View>
